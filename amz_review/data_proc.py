@@ -24,14 +24,14 @@ def get_product_by_id(product_id, items_df):
         return "Error obtaining product info"
 
 
-def compare_personalized_result(original_df, recommendations_response_rerank, items_df):
+def compare_personalized_result(rerank_df, recommendations_response_rerank, items_df):
     ranked_list = []
     item_list = recommendations_response_rerank['personalizedRanking']
     for item in item_list:
         product = get_product_by_id(item['itemId'], items_df)
         ranked_list.append(product)
-    ranked_df = pd.DataFrame(ranked_list, columns = ['Original','Re-Ranked'])
-    compare_df = pd.concat([original_df, ranked_df], axis=1)
+    ranked_df = pd.DataFrame(ranked_list, columns = ['Personalized Product title','Product Category'])
+    compare_df = pd.concat([rerank_df, ranked_df], axis=1)
     # pd.set_option('display.max_colwidth', -1)
     # pd.set_option('display.max_rows', None)
     return compare_df
@@ -48,7 +48,6 @@ def plot_heat_map(df, figsize=(10,7)):
 
 def get_user_history(user_id, user_item_df, items_df):
     user_df = user_item_df[user_item_df['USER_ID']==user_id]
-    print(user_df)
     all_df = user_df.merge(items_df, left_on='ITEM_ID', right_on='product_id')
     # plot_heat_map(all_df, figsize=(10,5))
     return all_df
